@@ -7,21 +7,23 @@ Investment *g_pInvestment = NULL;
 Investment * createInvestment()
 // factory function
 {
-    if( g_pInvestment == NULL ) {
-        g_pInvestment = new Investment( 10 );
-    }
-    return g_pInvestment;
+    Investment *pLocalPtr = new Investment( 10 );
+    return pLocalPtr;
+    // if( g_pInvestment == NULL ) {
+    //     g_pInvestment = new Investment( 10 );
+    // }
+    // return g_pInvestment;
 }
 
 void ReleaseInvestmentDirectly( Investment *pInv )
 {
-    delete g_pInvestment;
-    g_pInvestment = NULL;
+    delete pInv;
+    pInv = NULL;
 }
 
-const int& GetDaysHeld( Investment *pInv )
+void PrintDaysHeld( Investment *pInv )
 {
-    return pInv->GetDaysHeld();
+    std::cout << "PrintDaysHeld of " << pInv << " is " << pInv->GetDaysHeld() << std::endl;
 }
 
 void ExampleI( void )
@@ -32,18 +34,20 @@ void ExampleI( void )
     // example 1
     // argument is a pointer to Investment, not a shared pointer
     // GetDaysHeld( pSharedInv ); // GetDaysHeld( &pSharedInv ); // <---------Try to uncomment this line
-    GetDaysHeld( pLocalInv );
+    PrintDaysHeld( pLocalInv );
 
     // example 1-1
     // resource managing class provide "get()" function
     // as a method to do explicit casting
-    GetDaysHeld( pSharedInv.get() );
+    PrintDaysHeld( pSharedInv.get() );
 
     // example 1-2
     // resource managing class overload "operator->", "operator*"
     // as a method to do implicit casting
     pSharedInv->IsTaxFree();
     ( *pSharedInv ).IsTaxFree();
+
+    // note that pLocalInv cause memory leak
 }
 
 void ExampleII( void )
@@ -53,11 +57,12 @@ void ExampleII( void )
 
     // example 2-1
     // write your get(), explicit casting
-    std::cout << "Held day 2-1 = " << GetDaysHeld( MyInvestKeeper.get() ) << std::endl;
+    PrintDaysHeld( MyInvestKeeper.get() );
 
     // example 2-2
     // write your operator, implicit casting
-    std::cout << "Held day 2-2 = " << GetDaysHeld( MyInvestKeeper ) << std::endl;
+    std::cout << std::endl;
+    PrintDaysHeld( MyInvestKeeper );
 
     // example 2-3
     // implicit casting may lead to some horror situation
